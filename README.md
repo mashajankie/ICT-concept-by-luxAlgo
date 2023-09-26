@@ -1,1 +1,1 @@
-# ICT-concept-by-luxAlgo
+# AJ MADISHA MARKET ANALYST INDICATOR
