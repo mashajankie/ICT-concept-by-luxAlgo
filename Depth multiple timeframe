@@ -1,0 +1,180 @@
+// © Dreadblitz
+//@version=4
+study(title="Depth Multiple Time Frame", shorttitle = "DMTF", overlay=false)
+//
+tf_c      = input(title = "🔹 Current Timeframe 🔹", defval = true, type = input.bool)
+ma_type_c = input(title="Type of MA=", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_c  = input(defval=200, title="MA Lenght=", minval=1, type=input.integer)
+ma_src_c  = input(close, title="MA Source=",type=input.source)
+ma_dsl_c  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_c  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+tf_1      = input(title = "🔹 Timeframe 1 🔹", defval = true, type = input.bool)
+ma_type_1 = input(title="Type of MA Timeframe 1", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_1  = input(defval=200, title="MA Lenght Timeframe 1", minval=1, type=input.integer)
+ma_src_1  = input(close, title="MA Source Timeframe 1",type=input.source)
+res1      = input("2", type=input.resolution, title="Timeframe 1")
+ma_dsl_1  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_1  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+tf_2      = input(title = "🔹 Timeframe 2 🔹", defval = true, type = input.bool)
+ma_type_2 = input(title="Type of MA Timeframe 2", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_2  = input(defval=200, title="MA Lenght Timeframe 2", minval=1, type=input.integer)
+ma_src_2  = input(close, title="MA Source Timeframe 2",type=input.source)
+res2      = input("5", type=input.resolution, title="Timeframe 2")
+ma_dsl_2  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_2  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+tf_3      = input(title = "🔹 Timeframe 3 🔹", defval = true, type = input.bool)
+ma_type_3 = input(title="Type of MA Timeframe 3", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_3  = input(defval=200, title="MA Lenght Timeframe 3", minval=1, type=input.integer)
+ma_src_3  = input(close, title="MA Source Timeframe 3",type=input.source)
+res3      = input("15", type=input.resolution, title="Timeframe 3")
+ma_dsl_3  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_3  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+tf_4      = input(title = "🔹 Timeframe 4 🔹", defval = true, type = input.bool)
+ma_type_4 = input(title="Type of MA Timeframe 4", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_4  = input(defval=200, title="MA Lenght Timeframe 4", minval=1, type=input.integer)
+ma_src_4  = input(close, title="MA Source Timeframe 4",type=input.source)
+res4      = input("60", type=input.resolution, title="Timeframe 4")
+ma_dsl_4  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_4  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+tf_5      = input(title = "🔹 Timeframe 5 🔹", defval = true, type = input.bool)
+ma_type_5 = input(title="Type of MA Timeframe 5", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_5  = input(defval=200, title="MA Lenght Timeframe 5", minval=1, type=input.integer)
+ma_src_5  = input(close, title="MA Source Timeframe 5",type=input.source)
+res5      = input("120", type=input.resolution, title="Timeframe 5")
+ma_dsl_5  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_5  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+tf_6      = input(title = "🔹 Timeframe 6 🔹", defval = true, type = input.bool)
+ma_type_6 = input(title="Type of MA Timeframe 6", defval="SMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "HullMA", "TMA",  "DEMA", "TEMA"])
+ma_len_6  = input(defval=200, title="MA Lenght Timeframe 6", minval=1, type=input.integer)
+ma_src_6  = input(close, title="MA Source Timeframe 6",type=input.source)
+res6      = input("1D", type=input.resolution, title="Timeframe 6")
+ma_dsl_6  = input(defval=0.89, title="Depth Search Level", minval=0.0,step=0.01, type=input.float)
+nopbtf_6  = input(defval=200, title="Number Of Previous Bars To Find Depth", minval=1, type=input.integer)
+//
+red=#FF0000
+green=#32CD32
+//
+smma(src, len) =>
+    smma = 0.0
+    smma := na(smma[1]) ? sma(src, len) : (smma[1] * (len - 1) + src) / len
+    smma
+//
+ma(type, src, length) => 
+    if type == "RMA"
+        rma(src, length)
+    else
+        if type == "SMA"
+            sma(src, length)
+        else 
+            if type == "EMA"
+                ema(src, length)
+            else 
+                if type == "WMA"
+                    wma(src, length)
+				else
+					if type == "VWMA"
+						vwma(src, length)
+					else
+						if type == "SMMA"
+						    smma(src, length)
+						else
+							if type == "HullMA"
+								wma(2 * wma(src, length / 2) - wma(src, length), round(sqrt(length)))
+							else
+                                if type == "TMA"
+                                    sma(sma(close, length), length)
+                                else
+                                    if type == "DEMA"
+                                        emaValue = ema(src, length)
+                                        2 * emaValue - ema(emaValue, length)
+                                    else
+                                        if type == "TEMA"
+                                            ema1 = ema(src, length)
+                                            ema2 = ema(ema1, length)
+                                            ema3 = ema(ema2, length)
+                                            (3 * ema1) - (3 * ema2) + ema3
+//
+ma_current       = ma(ma_type_c, ma_src_c, ma_len_c)
+src_current      = ma_src_c
+dist_current     = abs(src_current-ma_current)
+niv_prof_current = highest(dist_current, nopbtf_c)*ma_dsl_c
+//
+ma_tf_1          = security(syminfo.tickerid, res1, ma(ma_type_1, ma_src_1, ma_len_1))
+src_tf_1         = security(syminfo.tickerid, res1, ma_src_1)
+dist_tf_1        = abs(src_tf_1-ma_tf_1)
+niv_prof_tf_1    = highest(dist_tf_1, nopbtf_1)*ma_dsl_1
+col_tf_1         = dist_tf_1 >= niv_prof_tf_1 and ma_src_1 > ma_tf_1 ? red : dist_tf_1 >= niv_prof_tf_1 and ma_src_1 < ma_tf_1 ? green : na
+//
+ma_tf_2          = security(syminfo.tickerid, res2, ma(ma_type_2, ma_src_2, ma_len_2))
+src_tf_2         = security(syminfo.tickerid, res2, ma_src_2)
+dist_tf_2        = abs(src_tf_2-ma_tf_2)
+niv_prof_tf_2    = highest(dist_tf_2, nopbtf_2)*ma_dsl_2
+col_tf_2         = dist_tf_2 >= niv_prof_tf_2 and ma_src_2 > ma_tf_2 ? red : dist_tf_2 >= niv_prof_tf_2 and ma_src_2 < ma_tf_2 ? green : na
+//
+ma_tf_3          = security(syminfo.tickerid, res3, ma(ma_type_3, ma_src_3, ma_len_3))
+src_tf_3         = security(syminfo.tickerid, res3, ma_src_3)
+dist_tf_3        = abs(src_tf_3-ma_tf_3)
+niv_prof_tf_3    = highest(dist_tf_3, nopbtf_3)*ma_dsl_3
+col_tf_3         = dist_tf_3 >= niv_prof_tf_3 and ma_src_3 > ma_tf_3 ? red : dist_tf_3 >= niv_prof_tf_3 and ma_src_3 < ma_tf_3 ? green : na
+//
+ma_tf_4          = security(syminfo.tickerid, res4, ma(ma_type_4, ma_src_4, ma_len_4))
+src_tf_4         = security(syminfo.tickerid, res4, ma_src_4)
+dist_tf_4        = abs(src_tf_4-ma_tf_4)
+niv_prof_tf_4    = highest(dist_tf_4, nopbtf_4)*ma_dsl_4
+col_tf_4         = dist_tf_4 >= niv_prof_tf_4 and ma_src_4 > ma_tf_4 ? red : dist_tf_4 >= niv_prof_tf_4 and ma_src_4 < ma_tf_4 ? green : na
+//
+ma_tf_5          = security(syminfo.tickerid, res5, ma(ma_type_5, ma_src_5, ma_len_5))
+src_tf_5         = security(syminfo.tickerid, res5, ma_src_5)
+dist_tf_5        = abs(src_tf_5-ma_tf_5)
+niv_prof_tf_5    = highest(dist_tf_5, nopbtf_5)*ma_dsl_5
+col_tf_5         = dist_tf_5 >= niv_prof_tf_5 and ma_src_5 > ma_tf_5 ? red : dist_tf_5 >= niv_prof_tf_5 and ma_src_5 < ma_tf_5 ? green : na
+//
+ma_tf_6          = security(syminfo.tickerid, res6, ma(ma_type_6, ma_src_6, ma_len_6))
+src_tf_6         = security(syminfo.tickerid, res6, ma_src_6)
+dist_tf_6        = abs(src_tf_6-ma_tf_6)
+niv_prof_tf_6    = highest(dist_tf_6, nopbtf_6)*ma_dsl_6
+col_tf_6         = dist_tf_6 >= niv_prof_tf_6 and ma_src_6 > ma_tf_6 ? red : dist_tf_6 >= niv_prof_tf_6 and ma_src_6 < ma_tf_6 ? green : na
+//
+lapos_x = timenow + round(change(time)*3)
+lapos_y = highest(5)
+f_draw_label(x,y,_text,_textcolor, _size)=>
+    var label Label = na
+    label.delete(Label)
+    Label := label.new(x, y, _text, color=color.new(color.white, 20), textcolor=_textcolor, style=label.style_none, yloc=yloc.price, xloc=xloc.bar_time, size=_size)
+res_to_string(res)=>
+    str = iff(res == "1", "m1⌚", iff(res == "2", "m2⌚", iff(res == "3", "m3⌚", iff(res == "5", "m5⌚", iff(res == "15", "m15⌚", iff(res == "30", "m30⌚", 
+     iff(res == "60", "H1⌚", iff(res == "120", "H2⌚", iff(res == "180", "H3⌚", iff(res == "240", "H4⌚", iff(res == "1D", "1D⌚",iff(res == "45", "m45⌚",iff(res == "1W", "1W⌚",iff(res == "1M", "1M⌚",iff(res == "15S", "15s⌚",iff(res == "30S", "30⌚s",iff(res == "5S", "5s⌚",iff(res == "1S", "1s⌚", ""))))))))))))))))))
+    str
+f_draw_label(lapos_x,      0, res_to_string(res1), color.black, size.normal)
+f_draw_label(lapos_x,      1, res_to_string(res2), color.black, size.normal) 
+f_draw_label(lapos_x,      2, res_to_string(res3), color.black, size.normal) 
+f_draw_label(lapos_x,      3, res_to_string(res4), color.black, size.normal) 
+f_draw_label(lapos_x,      4, res_to_string(res5), color.black, size.normal) 
+f_draw_label(lapos_x,      5, res_to_string(res6), color.black, size.normal)
+//
+h0 = hline(0, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+h1 = hline(1, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+h2 = hline(2, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+h3 = hline(3, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+h4 = hline(4, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+h5 = hline(5, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+h6 = hline(6, color=color.new(color.black, 20), linewidth=1, linestyle=hline.style_solid)
+//
+bgcolor(dist_current >= niv_prof_current and ma_src_c > ma_current ? red : dist_current >= niv_prof_current and ma_src_c < ma_current ? green : na,title='Current Time Frame Depth', transp=85)
+//
+plotshape(0, style=shape.square, location=location.absolute, color=col_tf_1, size = size.tiny)
+plotshape(1, style=shape.square, location=location.absolute, color=col_tf_2, size = size.tiny)
+plotshape(2, style=shape.square, location=location.absolute, color=col_tf_3, size = size.tiny)
+plotshape(3, style=shape.square, location=location.absolute, color=col_tf_4, size = size.tiny)
+plotshape(4, style=shape.square, location=location.absolute, color=col_tf_5, size = size.tiny)
+plotshape(5, style=shape.square, location=location.absolute, color=col_tf_6, size = size.tiny)
+//
+l=line.new(time , -0.5, time, 6.5, xloc.bar_time, extend=extend.none, style=line.style_solid, color=color.new(color.blue, 75), width=1)
+line.delete(l[1])
+//
