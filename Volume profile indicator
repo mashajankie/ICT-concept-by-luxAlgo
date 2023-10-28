@@ -1,0 +1,117 @@
+// This work is licensed under a Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) https://creativecommons.org/licenses/by-nc-sa/4.0/
+// © LuxAlgo
+
+//@version=5
+indicator("Volume Profile Matrix [LuxAlgo]", overlay = true, max_boxes_count = 500, max_lines_count = 500)
+//------------------------------------------------------------------------------
+//Settings
+//-----------------------------------------------------------------------------{
+length  = input.int(200, 'Lookback', minval = 1)
+columns = input.int(20, minval = 2)
+rows    = input.int(20, minval = 2)
+
+//Colors
+showAreas = input.bool(true, 'Areas'                 , inline = 'Gradient', group = 'Style')
+lowCss    = input.color(color.new(#0a0032, 50), '' , inline = 'Gradient', group = 'Style')
+highCss   = input.color(color.new(#ff1100, 50), '' , inline = 'Gradient', group = 'Style')
+topCss    = input.color(color.new(#ffe400, 50), '' , inline = 'Gradient', group = 'Style')
+
+showPoc = input.bool(true, 'Column POC', inline = 'poc', group = 'Style')
+pocCss  = input.color(color.white, '', inline = 'poc', group = 'Style')
+
+showAxis = input.bool(true, 'Axis', inline = 'axis', group = 'Style')
+axisCss  = input(#ff5d00, ''    , inline = 'axis', group = 'Style')
+
+//-----------------------------------------------------------------------------}
+//Main variables
+//-----------------------------------------------------------------------------{
+var poc_css = color.rgb(color.r(topCss), color.g(topCss), color.b(topCss))
+
+n = bar_index
+upper = ta.highest(length)
+lower = ta.lowest(length)
+
+var dist = length / columns
+var pocs = array.new<line>(0)
+mt = matrix.new<float>(rows, columns, 0)
+
+if barstate.isfirst and showPoc
+    for i = 0 to columns-1
+        pocs.unshift(line.new(na,na,na,na,color = pocCss))
+
+//-----------------------------------------------------------------------------}
+//Display volume matrix
+//-----------------------------------------------------------------------------{
+var horizontal = line.new(na, na, na, na, color = axisCss)
+var vertical   = line.new(na, na, na, na, color = axisCss)
+
+for bx in box.all
+    bx.delete()
+
+if barstate.islast
+    poc = line.new(na,na,na,na)
+    x1 = n - length + 1
+    x2 = n + 1
+
+    //Loop trough most recent bars and accumulate volume on corresponding matrix entry
+    for i = 0 to length-1
+        col = math.ceil(i / (length-1) * columns)
+        rh = math.ceil((high[i] - lower)/(upper - lower) * rows)
+        rl = math.ceil((low[i] - lower)/(upper - lower) * rows)
+
+        //Loop trough rows where price is lying on the corresponding column and accumulate volume
+        for j = math.max(rl-1, 0) to math.max(rh-1, 0)
+            get_val = mt.get(j, math.max(col-1, 0))
+            mt.set(j, math.max(col-1, 0), get_val + volume[i])
+
+    //Get matrix maximum/minimum
+    max = mt.max()
+    min = mt.min()
+
+    get_val = 0.
+
+    //Loop trough columns
+    for i = 0 to columns-1
+        up = upper
+        dn = upper
+        get_col_max = mt.col(i).max()
+
+        //Loop trough rows
+        for j = 0 to rows-1
+            get_val := mt.get(rows-1 - j, i)
+
+            //Color gradient
+            css1 = color.from_gradient(get_val, 0, .8 * max + .1 * min, lowCss, highCss)
+            css2 = color.from_gradient(get_val, .8 * max + .1 * min, max, css1, topCss)
+
+            dn -= (upper - lower) / rows
+
+            //Set POC
+            if get_val == get_col_max and showPoc
+                avg = math.avg(up, dn)
+                
+                get_l = pocs.get(i)
+                get_l.set_xy1(n + 1 - dist * (i + 1), avg)
+                get_l.set_xy2(n + 1 - dist * i, avg)
+
+                if get_val == max
+                    poc := get_l
+                    poc.set_x2(n)
+                    poc.set_color(poc_css)
+
+            //Set Box
+            if get_val != 0 and showAreas
+                box.new(n + 1 - dist * (i + 1), up, n + 1 - dist * i, dn, na
+                  , bgcolor = css2)
+            
+            up := dn
+
+    //Set Axis
+    if showAxis
+        horizontal.set_xy1(n - length + 1, lower)
+        horizontal.set_xy2(n + 1, lower)
+
+        vertical.set_xy1(n - length + 1, upper)
+        vertical.set_xy2(n - length + 1, lower)
+
+//-----------------------------------------------------------------------------}
